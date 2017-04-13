@@ -19,9 +19,8 @@ section
 
 ## Usage
 
-PGSchema will check and only effects when specific connection driver is 'pgsql'.
-So you can using PGSchema your migrations with any database connection drivers without errors.
- 
+PGSchema will check and only affects when specific connection driver is 'pgsql'.
+So you can using PGSchema to your migrations with any database connection drivers without error occurred.
 
 ### Migrations Example (every schemas) 
 ```php
@@ -41,14 +40,16 @@ class CreateFlightsTable extends Migration
      */
     public function up()
     {
-        PGSchema::each(
+        PGSchema::each(function() {
+
             Schema::create('flights', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->string('airline');
                 $table->timestamps();
-            })
-        );
+            });
+
+        });
     }
 
     /**
@@ -58,9 +59,9 @@ class CreateFlightsTable extends Migration
      */
     public function down()
     {
-        PGSchema::each(
-            Schema::drop('flights')
-        );
+        PGSchema::each(function(){
+            Schema::drop('flights');
+        });
     }
 }
 ```

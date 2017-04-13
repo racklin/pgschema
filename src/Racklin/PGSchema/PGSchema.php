@@ -25,6 +25,8 @@ class PGSchema
         if (DB::connection($databaseName)->getDriverName() == 'pgsql') {
             $schemas = DB::connection($databaseName)->table('information_schema.schemata')
                 ->select('schema_name')
+                ->where('schema_name', 'not like', 'pg_%')
+                ->where('schema_name', '<>', 'information_schema')
                 ->get();
 
             return $schemas;
@@ -75,6 +77,8 @@ class PGSchema
     /**
      * Iterating Schemas
      *
+     * Iterating all schemas and swtich back to 'public' schema after iterated.
+     *
      * @param Closure $callback
      * @param string $databaseName
      */
@@ -83,10 +87,15 @@ class PGSchema
         if (DB::connection($databaseName)->getDriverName() == 'pgsql') {
             $schemas = $this->listSchemas($databaseName);
 
+            $lastSchema = 'public';
             foreach ($schemas as $schema) {
-                $this->schema($schema, $databaseName);
+                $this->schema($schema->schema_name, $databaseName);
+                $lastSchema = $schema->schema_name;
                 $callback();
             }
+
+            // switch back to public schema
+            if ($lastSchema != 'public') $this->schema('public', $databaseName);
 
         } else {
             $callback();

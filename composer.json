@@ -1,0 +1,22 @@
+{
+    "name": "racklin/pgschema",
+    "description": "postgresql schemas for laravel 5",
+    "keywords" : ["laravel", "postgres"],
+    "license" : "MIT",
+    "authors": [
+        {
+            "name": "Rack Lin",
+            "email": "racklin@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "5.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Racklin\\PGSchema": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}

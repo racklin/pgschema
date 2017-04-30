@@ -22,7 +22,7 @@ class PGSchema
      */
     public function listSchemas($databaseName = null)
     {
-        if (DB::connection($databaseName)->getDriverName() == 'pgsql') {
+        if ($this->getDatabaseDriverName($databaseName) == 'pgsql') {
             $schemas = DB::connection($databaseName)->table('information_schema.schemata')
                 ->select('schema_name')
                 ->where('schema_name', 'not like', 'pg_%')
@@ -44,7 +44,7 @@ class PGSchema
      */
     public function schemaExists($schemaName, $databaseName = null)
     {
-        if (DB::connection($databaseName)->getDriverName() == 'pgsql') {
+        if ($this->getDatabaseDriverName($databaseName) == 'pgsql') {
             $schema = DB::connection($databaseName)->table('information_schema.schemata')
                 ->select('schema_name')
                 ->where('schema_name', '=', $schemaName)
@@ -63,14 +63,20 @@ class PGSchema
      */
     public function schema($schemaName = 'public', $databaseName = null)
     {
-        if (DB::connection($databaseName)->getDriverName() == 'pgsql') {
+        if ($this->getDatabaseDriverName($databaseName) == 'pgsql') {
             if (!is_array($schemaName)) {
-                $schemaName = [$schemaName];
+                $schemas = [$schemaName];
             }
 
-            $query = 'SET search_path TO ' . implode(',', $schemaName);
-
-            DB::statement($query);
+            // If not connected to database, only setting the schema to database config
+            // And laravel PostgresConnection will set search_path after connection created.
+            if (!isset(DB::getConnections()[$databaseName])) {
+                $this->setDatabaseSchemaConfig($schemaName, $databaseName);
+            } else {
+                // set connection to schema
+                $query = 'SET search_path TO ' . implode(',', $schemas);
+                DB::connection($databaseName)->statement($query);
+            }
         }
     }
 
@@ -84,7 +90,7 @@ class PGSchema
      */
     public function each(Closure $callback, $databaseName = null)
     {
-        if (DB::connection($databaseName)->getDriverName() == 'pgsql') {
+        if ($this->getDatabaseDriverName($databaseName) == 'pgsql') {
             $schemas = $this->listSchemas($databaseName);
 
             $lastSchema = 'public';
@@ -110,7 +116,7 @@ class PGSchema
      */
     public function create($schemaName, $databaseName = null)
     {
-        if (DB::connection($databaseName)->getDriverName() == 'pgsql') {
+        if ($this->getDatabaseDriverName($databaseName) == 'pgsql') {
             DB::connection($databaseName)->statement('CREATE SCHEMA ' . $schemaName);
         }
     }
@@ -123,7 +129,7 @@ class PGSchema
      */
     public function drop($schemaName, $databaseName = null)
     {
-        if (DB::connection($databaseName)->getDriverName() == 'pgsql') {
+        if ($this->getDatabaseDriverName($databaseName) == 'pgsql') {
             DB::connection($databaseName)->statement('DROP SCHEMA ' . $schemaName . ' CASCADE');
         }
     }
@@ -138,12 +144,62 @@ class PGSchema
      */
     public function getSearchPath($databaseName = null)
     {
-        if (DB::connection($databaseName)->getDriverName() == 'pgsql') {
+        if ($this->getDatabaseDriverName($databaseName) == 'pgsql') {
             $query = DB::connection($databaseName)->select('show search_path');
             $searchPath = array_pop($query)->search_path;
-
             return $searchPath;
         }
         return '';
     }
+
+
+    /**
+     * Return the database config
+     *
+     * @param string $databaseName
+     *
+     * @return string
+     */
+    protected function getDatabaseConfig($databaseName = null)
+    {
+        $databaseName = !empty($databaseName) ? $databaseName : app()['config']['database.default'];
+        $configKey = 'database.connections.' . $databaseName;
+        return  app()['config'][$configKey] ?: [];
+    }
+
+    /**
+     * Return the database driver name
+     *
+     * @param string $databaseName
+     *
+     * @return string
+     */
+    protected function getDatabaseDriverName($databaseName = null)
+    {
+        $config = $this->getDatabaseConfig($databaseName);
+        return  $config['driver'];
+    }
+
+    /**
+     * Set the database schema config
+     *
+     * @param string $schemaName
+     * @param string $databaseName
+     *
+     * @return string
+     */
+    protected function setDatabaseSchemaConfig($schemaName = 'public', $databaseName = null)
+    {
+        if (!is_array($schemaName)) {
+            $schemas = [$schemaName];
+        }
+
+        $databaseName = !empty($databaseName) ? $databaseName : app()['config']['database.default'];
+        $configKey = 'database.connections.' . $databaseName;
+        $config = app()['config'][$configKey];
+        if (!empty($config)) {
+            app()['config'][$configKey . '.schema'] = implode(',', $schemas);
+        }
+    }
+
 }

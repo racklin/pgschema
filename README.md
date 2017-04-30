@@ -1,72 +1,165 @@
-# Postgres Schema manager for Laravel
+# PostgreSQL Schema manager for Laravel
 
 This is very useful when you are working with multi-tenants
-applications with Postgresql Schemas.
+applications with PostgreSQL Schemas.
 
-You can create/drop/switch schemas easily and support migrations.
+With facade helper functions, you can create/drop/switch schemas easily.
+This package also provide artisan commands for migrations and seeds supports for each schemas.
  
+PGSchema will check and only affects when specific connection driver is `pgsql`.
+So you can using PGSchema to your projects safely with any database connection drivers without error occurred.
 
 ## Installation
 
 1. Use composer to add the package into your project
-using
-`composer require racklin/pgschema:dev-master`
+```
+composer require racklin/pgschema:dev-master
+```
 
-2. Add 'Racklin\PGSchema\PGSchemaServiceProvider' to your app.php file in the
-`services providers` section.
-3. Add 'PGSchema' => 'Racklin\PGSchema\Facades\PGSchema' into the `aliases`
-section
+2. Add service provider into your providers array in `config/app.php`
+```
+Racklin\PGSchema\PGSchemaServiceProvider::class,
+```
 
-## Usage
+3. Add alias to aliases array in `config/app.php`
+```
+'PGSchema' => Racklin\PGSchema\Facades\PGSchema::class,
+```
 
-PGSchema will check and only affects when specific connection driver is 'pgsql'.
-So you can using PGSchema to your migrations with any database connection drivers without error occurred.
+## Artisan Commands
+### pgschema:migrate
+`pgschema:migrate` add extra `schema` option to Laravel `migrate` command, you can specific the database schema for migrations.
+ And it will auto install `migrations` repository table for the schema.
+```
+Usage:
+  pgschema:migrate [options]
 
-### Migrations Example (every schemas) 
-```php
-<?php
+Options:
+      --database[=DATABASE]  The database connection to use.
+      --schema[=SCHEMA]      The database schema to use.
+      --force                Force the operation to run when in production.
+      --path[=PATH]          The path of migrations files to be executed.
+      --pretend              Dump the SQL queries that would be run.
+      --seed                 Indicates if the seed task should be re-run.
+      --step                 Force the migrations to be run so they can be rolled back individually.
+  -h, --help                 Display this help message
+  -q, --quiet                Do not output any message
+  -V, --version              Display this application version
+      --ansi                 Force ANSI output
+      --no-ansi              Disable ANSI output
+  -n, --no-interaction       Do not ask any interactive question
+      --env[=ENV]            The environment the command should run under
+  -v|vv|vvv, --verbose       Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
-use Racklin\PGSchema\Facades\PGSchema;
+Help:
+  Run the database migrations
+```
 
-class CreateFlightsTable extends Migration
-{
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        PGSchema::each(function() {
+### pgschema:rollback
+`pgschema:rollback` add extra `schema` option to Laravel `migrate:rollback` command.
+```
+Usage:
+  pgschema:rollback [options]
 
-            Schema::create('flights', function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('name');
-                $table->string('airline');
-                $table->timestamps();
-            });
+Options:
+      --database[=DATABASE]  The database connection to use.
+      --force                Force the operation to run when in production.
+      --path[=PATH]          The path of migrations files to be executed.
+      --pretend              Dump the SQL queries that would be run.
+      --step[=STEP]          The number of migrations to be reverted.
+      --schema[=SCHEMA]      The database schema to use
+  -h, --help                 Display this help message
+  -q, --quiet                Do not output any message
+  -V, --version              Display this application version
+      --ansi                 Force ANSI output
+      --no-ansi              Disable ANSI output
+  -n, --no-interaction       Do not ask any interactive question
+      --env[=ENV]            The environment the command should run under
+  -v|vv|vvv, --verbose       Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 
-        });
-    }
+Help:
+  Rollback the last database migration
+```
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        PGSchema::each(function(){
-            Schema::drop('flights');
-        });
-    }
-}
+### pgschema:reset
+`pgschema:reset` add extra `schema` option to Laravel `migrate:reset` command.
+```
+Usage:
+  pgschema:reset [options]
+
+Options:
+      --database[=DATABASE]  The database connection to use.
+      --force                Force the operation to run when in production.
+      --path[=PATH]          The path of migrations files to be executed.
+      --pretend              Dump the SQL queries that would be run.
+      --schema[=SCHEMA]      The database schema to use
+  -h, --help                 Display this help message
+  -q, --quiet                Do not output any message
+  -V, --version              Display this application version
+      --ansi                 Force ANSI output
+      --no-ansi              Disable ANSI output
+  -n, --no-interaction       Do not ask any interactive question
+      --env[=ENV]            The environment the command should run under
+  -v|vv|vvv, --verbose       Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Help:
+  Rollback all database migrations
+```
+
+### pgschema:refresh
+`pgschema:refresh` add extra `schema` option to Laravel `migrate:refresh` command.
+```
+Usage:
+  pgschema:refresh [options]
+
+Options:
+      --database[=DATABASE]  The database connection to use.
+      --force                Force the operation to run when in production.
+      --path[=PATH]          The path of migrations files to be executed.
+      --seed                 Indicates if the seed task should be re-run.
+      --seeder[=SEEDER]      The class name of the root seeder.
+      --step[=STEP]          The number of migrations to be reverted & re-run.
+      --schema[=SCHEMA]      The database schema to use
+  -h, --help                 Display this help message
+  -q, --quiet                Do not output any message
+  -V, --version              Display this application version
+      --ansi                 Force ANSI output
+      --no-ansi              Disable ANSI output
+  -n, --no-interaction       Do not ask any interactive question
+      --env[=ENV]            The environment the command should run under
+  -v|vv|vvv, --verbose       Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Help:
+  Reset and re-run all migrations
 ```
 
 
+### pgschema:seed
+`pgschema:seed` add extra `schema` option to Laravel `db:seed` command.
+```
+Usage:
+  pgschema:seed [options]
+
+Options:
+      --class[=CLASS]        The class name of the root seeder [default: "DatabaseSeeder"]
+      --database[=DATABASE]  The database connection to seed
+      --schema[=SCHEMA]      The database schema to seed
+      --force                Force the operation to run when in production.
+  -h, --help                 Display this help message
+  -q, --quiet                Do not output any message
+  -V, --version              Display this application version
+      --ansi                 Force ANSI output
+      --no-ansi              Disable ANSI output
+  -n, --no-interaction       Do not ask any interactive question
+      --env[=ENV]            The environment the command should run under
+  -v|vv|vvv, --verbose       Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Help:
+  Seed the database with records
+```
+
+
+## Facade Helper Functions
 ### Create new Schema
 
 `PGSchema::create($schemaName, $databaseName)`
@@ -99,4 +192,4 @@ if each is call without $databaseName argument, it using the default connection.
 
 ## Laravel version
 
-Current package version works for Laravel 5.
+Current package version works for Laravel 5+.

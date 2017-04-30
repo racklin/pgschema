@@ -193,3 +193,6 @@ if each is call without $databaseName argument, it using the default connection.
 ## Laravel version
 
 Current package version works for Laravel 5+.
+
+## License
+MIT: https://racklin.mit-license.org/

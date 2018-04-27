@@ -56,6 +56,52 @@ class PGSchema
     }
 
     /**
+     * Check to see if a table exists in schema
+     *
+     * @param string $tableName
+     * @param string $schemaName
+     * @param string $databaseName
+     *
+     * @return bool
+     */
+    public function tableExists($tableName, $schemaName, $databaseName = null)
+    {
+        if ($this->getDatabaseDriverName($databaseName) == 'pgsql') {
+            $table = DB::connection($databaseName)->table('information_schema.tables')
+                ->select('table_schema')
+                ->where('table_schema', '=', $schemaName)
+                ->where('table_name', '=', $tableName)
+                ->count();
+            return ($table > 0);
+        }
+        return true;
+    }
+
+    /**
+     * Check to see if a column exists in table
+     *
+     * @param string $columnName
+     * @param string $tableName
+     * @param string $schemaName
+     * @param string $databaseName
+     *
+     * @return bool
+     */
+    public function columnExists($columnName, $tableName, $schemaName, $databaseName = null)
+    {
+        if ($this->getDatabaseDriverName($databaseName) == 'pgsql') {
+            $column = DB::connection($databaseName)->table('information_schema.columns')
+                ->select('table_schema')
+                ->where('table_schema', '=', $schemaName)
+                ->where('table_name', '=', $tableName)
+                ->where('column_name', '=', $columnName)
+                ->count();
+            return ($column > 0);
+        }
+        return true;
+    }
+
+    /**
      * Set the search_path to the schema name
      *
      * @param string|array $schemaName

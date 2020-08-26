@@ -3,6 +3,7 @@
 namespace Racklin\PGSchema;
 
 use Illuminate\Support\ServiceProvider;
+use Racklin\PGSchema\Commands\PGCreateSchema;
 use Racklin\PGSchema\Commands\PGMigrateCommand;
 use Racklin\PGSchema\Commands\PGRefreshCommand;
 use Racklin\PGSchema\Commands\PGResetCommand;
@@ -42,12 +43,18 @@ class PGSchemaServiceProvider extends ServiceProvider
         $this->app->singleton('pgschema.seed', function ($app) {
             return new PGSeedCommand($app['db']);
         });
+
+        $this->app->singleton('pgschema.create-schema', function ($app) {
+            return new PGCreateSchema($app['pgschema']);
+        });
+
         $this->commands([
             'pgschema.migrate',
             'pgschema.rollback',
             'pgschema.reset',
             'pgschema.refresh',
             'pgschema.seed',
+            'pgschema.create-schema'
         ]);
     }
 

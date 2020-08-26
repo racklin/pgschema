@@ -21,7 +21,7 @@ class PGRefreshCommand extends RefreshCommand
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         if (! $this->confirmToProceed()) {
             return;
@@ -32,7 +32,7 @@ class PGRefreshCommand extends RefreshCommand
         }
 
         // Running Laravel refresh command.
-        parent::fire();
+        parent::handle();
 
     }
 

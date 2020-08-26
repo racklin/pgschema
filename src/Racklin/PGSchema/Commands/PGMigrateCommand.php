@@ -2,9 +2,7 @@
 
 namespace Racklin\PGSchema\Commands;
 
-
 use Illuminate\Database\Console\Migrations\MigrateCommand;
-use DB;
 
 class PGMigrateCommand extends MigrateCommand
 {
@@ -27,7 +25,7 @@ class PGMigrateCommand extends MigrateCommand
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         if (! $this->confirmToProceed()) {
             return;
@@ -38,7 +36,7 @@ class PGMigrateCommand extends MigrateCommand
         }
 
         // Running Laravel migrate command.
-        parent::fire();
+        parent::handle();
     }
 
 }

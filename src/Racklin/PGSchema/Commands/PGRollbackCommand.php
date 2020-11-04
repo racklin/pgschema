@@ -21,7 +21,7 @@ class PGRollbackCommand extends RollbackCommand
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         if (! $this->confirmToProceed()) {
             return;
@@ -32,7 +32,7 @@ class PGRollbackCommand extends RollbackCommand
         }
 
         // Running Laravel rollback command.
-        parent::fire();
+        parent::handle();
 
     }
 

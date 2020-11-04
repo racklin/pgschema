@@ -5,7 +5,6 @@ namespace Racklin\PGSchema\Commands;
 use Illuminate\Database\Console\Seeds\SeedCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-
 class PGSeedCommand extends SeedCommand
 {
     /**
@@ -20,7 +19,7 @@ class PGSeedCommand extends SeedCommand
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         if (! $this->confirmToProceed()) {
             return;
@@ -31,8 +30,7 @@ class PGSeedCommand extends SeedCommand
         }
 
         // Running Laravel seed command.
-        parent::fire();
-
+        parent::handle();
     }
 
     /**

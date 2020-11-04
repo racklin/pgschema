@@ -9,6 +9,11 @@ This package also provide artisan commands for migrations and seeds supports for
 PGSchema will check and only affects when specific connection driver is `pgsql`.
 So you can using PGSchema to your projects safely with any database connection drivers without error occurred.
 
+## Laravel version
+
+Current package version works for Laravel `5+` .
+
+
 ## Installation
 
 1. Use composer to add the package into your project
@@ -189,10 +194,6 @@ if schema is call without $databaseName argument, it using the default connectio
 
 if each is call without $databaseName argument, it using the default connection.
 
-
-## Laravel version
-
-Current package version works for Laravel 5+.
 
 ## License
 MIT: https://racklin.mit-license.org/

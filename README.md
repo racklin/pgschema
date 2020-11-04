@@ -164,6 +164,27 @@ Help:
 ```
 
 
+### pgschema:create-schema
+`pgschema:create-schema` create `schema` for `database` .
+```
+Usage:
+  pgschema:create-schema [options] [--] <schema>
+
+Arguments:
+  schema                     The database schema to create
+
+Options:
+      --database[=DATABASE]  The database connection to use
+  -h, --help                 Display this help message
+  -q, --quiet                Do not output any message
+  -V, --version              Display this application version
+      --ansi                 Force ANSI output
+      --no-ansi              Disable ANSI output
+  -n, --no-interaction       Do not ask any interactive question
+      --env[=ENV]            The environment the command should run under
+  -v|vv|vvv, --verbose       Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+```
+
 ## Facade Helper Functions
 ### Create new Schema
 

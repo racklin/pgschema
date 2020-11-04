@@ -32,7 +32,7 @@ class PGMigrateCommand extends MigrateCommand
         }
 
         if (!empty($this->option('schema'))) {
-            $this->laravel['pgschema']->schema($this->option('schema'));
+            $this->laravel['pgschema']->schema($this->option('schema'), $this->option('database'));
         }
 
         // Running Laravel migrate command.

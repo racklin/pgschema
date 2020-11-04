@@ -18,7 +18,7 @@ class PGCreateSchema extends Command
     /**
      * @var PGSchema
      */
-    private PGSchema $PGSchema;
+    private $PGSchema;
 
     public function __construct(PGSchema $PGSchema)
     {

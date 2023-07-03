@@ -1,5 +1,5 @@
 {
-    "name": "racklin/pgschema",
+    "name": "jamoliddin/pgschema",
     "description": "postgresql schemas for laravel 10",
     "keywords" : ["laravel", "postgres"],
     "license" : "MIT",

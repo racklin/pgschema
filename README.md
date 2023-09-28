@@ -11,14 +11,14 @@ So you can using PGSchema to your projects safely with any database connection d
 
 ## Laravel version
 
-Current package version works for Laravel `5+` .
+Current package version works for Laravel `10` .
 
 
 ## Installation
 
 1. Use composer to add the package into your project
 ```
-composer require racklin/pgschema:dev-master
+composer require jamoliddin/pgschema
 ```
 
 2. Add service provider into your providers array in `config/app.php`
